@@ -107,9 +107,12 @@ export default new Vuex.Store({
           commit("changeLoadingState", false);
           commit(
             "changeError",
-            error + ".Failed to get Current Todays weather"
+            error + ".Failed to get hourly forecast for todays weather"
           );
-          alert(error + ".Failed to get Current Todays weather");
+          alert(
+            error +
+              ".Failed to get hourly forecast for todays weather. Most likely the query has no matches"
+          );
         });
     }
   },

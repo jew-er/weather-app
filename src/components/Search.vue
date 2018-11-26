@@ -78,6 +78,7 @@ export default {
       font-size: 1.3em;
       padding: 5px;
       transition: 0.1s ease-in;
+      color: black;
       cursor: pointer;
       &:disabled {
         background: gray;
@@ -90,6 +91,15 @@ export default {
         color: white;
         background: crimson;
       }
+    }
+  }
+}
+
+@media only screen and (max-width: 766px) {
+  .search {
+    .search-form {
+      display: flex;
+      flex-direction: column;
     }
   }
 }
