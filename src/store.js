@@ -2,17 +2,23 @@ import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
 import moment from "moment";
+import VuexPersistence from "vuex-persist";
 
 Vue.use(Vuex);
 const URL = getUrl("history"); // for history.json calls
 const URL2 = getUrl("current"); // for current.json calls
+const vuexLocal = new VuexPersistence({
+  storage: window.localStorage,
+  reducer: state => ({ history: state.history })
+});
 
 export default new Vuex.Store({
   state: {
     apidata: {},
     loading: false,
     search: "",
-    error: ""
+    error: "",
+    history: []
   },
   mutations: {
     updateData(state, data) {
@@ -34,6 +40,15 @@ export default new Vuex.Store({
     },
     changeError(state, error) {
       state.error = error.toString();
+    },
+    historyPush(state, query) {
+      if (query.length > 0) {
+        let currentTime = moment().format("llll");
+        state.history.push(query + "--" + currentTime);
+      }
+    },
+    historyShift(state) {
+      state.history.shift();
     }
   },
   actions: {
@@ -108,8 +123,12 @@ export default new Vuex.Store({
     },
     getError(state) {
       return state.error;
+    },
+    getHistory(state) {
+      return state.history;
     }
-  }
+  },
+  plugins: [vuexLocal.plugin]
 });
 
 function getUrl(callParameter) {
