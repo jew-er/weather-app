@@ -1,5 +1,5 @@
 <template>
-  <div class="current">
+  <div v-if="!getLoadingState" class="current">
     <div>
     <span><h2>{{getData.location.country}}</h2><p>{{getData.location.name}}</p></span>
     <img :src="getData.current.condition.icon">

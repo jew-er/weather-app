@@ -1,9 +1,12 @@
 <template>
 <div class="search">
+  <div class="search-form">
   <input v-model="query" placeholder="Enter city name">
   <button v-on:click="sendRequest" :disabled="shouldEnable">
     Search
   </button>
+  </div>
+  <div class="history" v-for="(i,key) in history" v-bind:key="key"><p>{{i}}</p></div>
 </div>
 </template>
 
@@ -12,13 +15,17 @@ export default {
   name: "Search",
   data: function() {
     return {
-      query: ""
+      query: "",
+      history: []
     };
   },
   methods: {
     sendRequest() {
+      this.history.push(this.query);
+      if (this.history.length > 5) {
+        this.history.shift();
+      }
       this.$store.dispatch("getForecast", this.query);
-      //this.$store.dispatch("getCurrentWeather", this.query);
     }
   },
   computed: {
@@ -32,12 +39,18 @@ export default {
 
 <style lang="scss" scoped>
 .search {
-  input {
-    font-family: "Open Sans", Arial, sans-serif;
+  color: white;
+  .history {
+    display: flex;
   }
+  .search-form {
+    input {
+      font-family: "Open Sans", Arial, sans-serif;
+    }
 
-  button {
-    font-family: "Open Sans", Arial, sans-serif;
+    button {
+      font-family: "Open Sans", Arial, sans-serif;
+    }
   }
 }
 </style>

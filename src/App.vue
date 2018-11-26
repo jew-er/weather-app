@@ -10,6 +10,7 @@
   :size="66"
   color="#ff1d5e"
 /></div>
+    <div class="errors"></div>
     </div>
     <router-view/>
   </div>
@@ -25,7 +26,7 @@ export default {
     TrinityRingsSpinner
   },
   computed: {
-    ...mapGetters(["getLoadingState"]),
+    ...mapGetters(["getLoadingState", "getError"]),
     hideIf404() {
       return !(this.$route.path === "/404");
     }
@@ -56,6 +57,9 @@ export default {
 }
 .nav {
   padding: 20px;
+  .errors {
+    color: white;
+  }
   a {
     font-weight: bold;
     margin: 4px;

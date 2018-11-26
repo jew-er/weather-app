@@ -11,7 +11,8 @@ export default new Vuex.Store({
   state: {
     apidata: {},
     loading: false,
-    search: ""
+    search: "",
+    error: ""
   },
   mutations: {
     updateData(state, data) {
@@ -30,6 +31,9 @@ export default new Vuex.Store({
     },
     changeSearchQuery(state, searchFor) {
       state.search = searchFor;
+    },
+    changeError(state, error) {
+      state.error = error.toString();
     }
   },
   actions: {
@@ -49,18 +53,49 @@ export default new Vuex.Store({
       commit("changeLoadingState", true);
 
       //get our weather information for today
-      axios.get(URL + state.search + "&dt=" + today).then(response => {
-        commit("updateData", response.data);
-        //look up the weather for tomorrow as well
-        axios.get(URL + state.search + "&dt=" + tomorrow).then(res => {
-          commit("addDay", res.data.forecast.forecastday[0]);
+      axios
+        .get(URL + state.search + "&dt=" + today)
+        .then(response => {
+          commit("updateData", response.data);
+          //look up the weather for tomorrow as well
+          axios
+            .get(URL + state.search + "&dt=" + tomorrow)
+            .then(res => {
+              commit("addDay", res.data.forecast.forecastday[0]);
+              commit("changeLoadingState", false);
+              axios
+                .get(URL2 + state.search)
+                .then(r => {
+                  commit("addCurrent", r.data.current);
+                  commit("changeLoadingState", false);
+                })
+                .catch(error => {
+                  commit("changeLoadingState", false);
+                  commit(
+                    "changeError",
+                    error + ".Failed to get Current weather"
+                  );
+                  alert(error + ".Failed to get Current weather");
+                });
+            })
+            .catch(error => {
+              commit("changeLoadingState", false);
+              commit("changeError", error + ".Failed to get Tomorrows weather");
+              alert(error + ".Failed to get Tomorrows weather");
+              axios.get(URL2 + state.search).then(rr => {
+                commit("addCurrent", rr.data.current);
+                commit("changeLoadingState", false);
+              });
+            });
+        })
+        .catch(error => {
           commit("changeLoadingState", false);
-          axios.get(URL2 + state.search).then(r => {
-            commit("addCurrent", r.data.current);
-            commit("changeLoadingState", false);
-          });
+          commit(
+            "changeError",
+            error + ".Failed to get Current Todays weather"
+          );
+          alert(error + ".Failed to get Current Todays weather");
         });
-      });
     }
   },
 
@@ -70,6 +105,9 @@ export default new Vuex.Store({
     },
     getLoadingState(state) {
       return state.loading;
+    },
+    getError(state) {
+      return state.error;
     }
   }
 });

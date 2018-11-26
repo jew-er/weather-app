@@ -1,11 +1,11 @@
 <template>
-  <div class="forecast">
+  <div v-if="!getLoadingState" class="forecast">
     <div  class="hour" v-for="(item,key) in hourlyData" v-bind:key="key">
       <img :src="item.condition.icon">
       <p>{{item.time.substring(item.time.length - 5, item.time.length)}}</p>
       <p>{{item.temp_c+"°C"}}</p>
-      <div><img src="@/assets/raindrop.png">{{item.chance_of_rain+"%"}}</div>
-      <div><img src="@/assets/snowflake.png">{{item.chance_of_snow+"%"}}</div>
+      <div><img src="@/assets/raindrop.png">{{item.chance_of_rain + "%"}}</div>
+      <div><img src="@/assets/snowflake.png">{{item.chance_of_snow + "%"}}</div>
     </div>
   </div>
 </template>
@@ -19,7 +19,10 @@ export default {
     ...mapGetters(["getData", "getLoadingState"]),
     hourlyData() {
       let day1 = this.getData.forecast.forecastday[0].hour;
-      let day2 = this.getData.forecast.forecastday[1].hour;
+      let day2 = [];
+      if (this.getData.forecast.forecastday[1] != undefined) {
+        day2 = this.getData.forecast.forecastday[1].hour;
+      }
       if (day1.length > 0 && day2.length > 0) {
         let hourlyData = day1.concat(day2);
         let filteredData = [];
@@ -28,6 +31,8 @@ export default {
         }
 
         return filteredData;
+      } else if (day1.length > 0) {
+        return day1;
       } else return [];
     }
   }
