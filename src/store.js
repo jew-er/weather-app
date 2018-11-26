@@ -135,7 +135,7 @@ export default new Vuex.Store({
 });
 
 function getUrl(callParameter) {
-  return `http://api.apixu.com/v1/${callParameter}.json?key=${
+  return `https://api.apixu.com/v1/${callParameter}.json?key=${
     process.env.VUE_APP_KEY
   }&q=`;
 }
